@@ -1,0 +1,11 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "payment-layer-card-api.fullname" . }}
+  labels:
+    {{- include "payment-layer-card-api.labels" . | nindent 4 }}
+data:
+{{- range $envKey, $envVal := .Values.env }}
+  {{ $envKey }}: {{ $envVal | quote }}
+{{- end }}

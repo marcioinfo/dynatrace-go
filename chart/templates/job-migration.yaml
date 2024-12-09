@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "payment-layer-card-api.fullname" . }}-migration
+  labels:
+    {{- include "payment-layer-card-api.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": "pre-install,pre-upgrade"
+spec:
+  template:
+    metadata:
+      labels:
+        {{- include "payment-layer-card-api.selectorLabels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          command: ['sh', '-c', './migrate -path ./migrations/ -database postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSL} up']
+          envFrom:
+            - configMapRef:
+                name: {{ include "payment-layer-card-api.fullname" . }}
+            {{- if .Values.externalSecrets.enabled }}
+            - secretRef:
+                name: {{ include "payment-layer-card-api.fullname" . }}
+            {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      restartPolicy: Never
+  backoffLimit: 1

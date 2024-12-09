@@ -1,0 +1,101 @@
+image:
+  repository: 755225270124.dkr.ecr.us-east-1.amazonaws.com/production-payment-layer-card-api
+  tag: ""
+  pullPolicy: Always
+
+env:
+  ENV: production
+  DEBUG: False
+  DOMAIN: localhost
+  SERVER_NAME: localhost
+  SERVER_HOST: http://localhost
+  SERVER_PORT: 8009
+  PROJECT_NAME: payment-layer-card-api
+  DOCKER_IMAGE_CELERYWORKER: celeryworker
+  INSTALL_DEV: False
+  # backend
+  SMTP_TLS: True
+  SMTP_PORT: 587
+  SMTP_HOST: f00
+  SMTP_USER: f00
+  SMTP_PASSWORD: f00
+  # Postgres
+  DATABASE_SERVER: afya-production-payment-layer-card-api.cv9bonlcyugj.us-east-1.rds.amazonaws.com
+  DATABASE_PORT: 5432
+  DATABASE_DB: pep
+
+  ICLINIC_API_URL: https://api.afya.systems
+
+  # AWS SQS - Simple Queue Service
+  SQS_QUEUE_NAME: afya-production--payment-layer-card-api
+  SQS_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/755225270124
+  BROKER_URL: sqs://
+
+  CACHE_SERVER: afya-production-payment-layer-card-api-redis-ro.6yojnd.ng.0001.use1.cache.amazonaws.com
+  CACHE_PORT: 6379
+  CACHE_DB: 0
+  CACHE_CONNECTION_TIMEOUT: 15
+  # basemed
+  BASEMED_HOST: https://search-api.basemed.com.br
+  #autentique
+  FILEUPLOAD_MAX_LENGTH: 50000
+  AUTENTIQUE_HOST: https://api.autentique.com.br/v2/graphql/
+  AUTENTIQUE_SANDBOX: False
+
+serviceAccount:
+  create: true
+  name: afya-production-payment-layer-card-api
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::620581011965:role/production--layer-card-api@payment-layer-card-api
+
+externalSecrets:
+  enabled: true
+  basePath: production
+
+livenessProbe:
+  httpHeaders:
+    - name: Host
+      value: payment-layer-card-api.afya.systems
+
+readinessProbe:
+  httpHeaders:
+    - name: Host
+      value: payment-layer-card-api.afya.systems
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/certificate-arn: arn:aws:acm:us-east-1:755225270124:certificate/9fbd1f65-d4ba-4407-8937-35842dea1b74
+    alb.ingress.kubernetes.io/wafv2-acl-arn: arn:aws:wafv2:us-east-1:755225270124:regional/webacl/afya-production-default-waf/1fd0b113-146c-456e-af23-e10c134e6035
+    alb.ingress.kubernetes.io/healthcheck-path: /healthz
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/ssl-policy: ELBSecurityPolicy-TLS-1-2-2017-01
+
+  hosts:
+    - host: payment-layer-card-api.afya.systems
+      paths:
+        - path: /*
+          pathType: ImplementationSpecific
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 50
+  targetCPUUtilizationPercentage: 50
+
+elastic:
+  enabled: true
+  certVerify: true
+  url: https://foundation-sre.apm.us-east-1.aws.found.io
+  tags:
+    env: production
+    service: payment-layer-card-api

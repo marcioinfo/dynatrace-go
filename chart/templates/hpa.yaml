@@ -1,0 +1,36 @@
+{{- if .Values.autoscaling.enabled }}
+{{- if semverCompare ">=1.22-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: autoscaling/v2
+{{- else -}}
+apiVersion: autoscaling/v2beta1
+{{- end }}
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "payment-layer-card-api.fullname" . }}
+  labels:
+    {{- include "payment-layer-card-api.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "payment-layer-card-api.fullname" . }}
+  minReplicas: {{ .Values.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          averageUtilization: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}
+          type: Utilization
+    {{- end }}
+    {{- if .Values.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          averageUtilization: {{ .Values.autoscaling.targetMemoryUtilizationPercentage }}
+          type: Utilization
+    {{- end }}
+{{- end }}

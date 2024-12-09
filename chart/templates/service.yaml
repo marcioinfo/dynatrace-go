@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "payment-layer-card-api.fullname" . }}
+  labels:
+    {{- include "payment-layer-card-api.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    {{- include "payment-layer-card-api.selectorLabels" . | nindent 4 }}

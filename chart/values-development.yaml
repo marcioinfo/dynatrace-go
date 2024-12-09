@@ -1,0 +1,81 @@
+replicaCount: 1
+
+image:
+  repository: 783417120609.dkr.ecr.us-east-1.amazonaws.com/develop-payment-layer-card-api
+  tag: ""
+  pullPolicy: Always
+
+env:
+  API_PAGARME_URL: https://api.pagar.me/core/v5
+  API_REDE_URL: https://testapi.maxipago.net/UniversalAPI
+  API_REDE_VERSION: 3.1.1.15
+  AUTH_BRIDGE_URL: http://development-payment-layer-auth-bridge.payment-layer-auth-bridge:8086
+  CARD_RETRY_COUNT: 3
+  CARD_RETRY_DELAY: 1000
+  CARD_RETRY_TIMEOUT: 3000
+  CREATE_CARD_INTEGRATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/783417120609/develop-card-service-card-created.fifo
+  CREATE_CUSTOMER_INTEGRATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/783417120609/develop-card-service-customer-created.fifo
+  CUSTOMER_RETRY_COUNT: 3
+  CUSTOMER_RETRY_DELAY: 1000
+  CUSTOMER_RETRY_TIMEOUT: 3000
+  DB_PORT: 5432
+  DB_SSL: require
+  DEBUG: False
+  ELASTIC_APM_ACTIVE: "true"
+  ELASTIC_APM_CAPTURE_BODY: "off"
+  ELASTIC_APM_CAPTURE_BODY_CUSTOM: "true"
+  ELASTIC_APM_CAPTURE_BODY_CUSTOM_ARRAY_INDEX_FROM: 0
+  ELASTIC_APM_CAPTURE_BODY_CUSTOM_ARRAY_INDEX_TO: 1
+  ELASTIC_APM_ENABLED: true
+  ELASTIC_APM_ENVIRONMENT: development
+  ELASTIC_APM_LOG_FILE: stderr
+  ELASTIC_APM_LOG_LEVEL: error
+  ELASTIC_APM_SANITIZE_FIELD_NAMES: document,number,cvv,password,secret,passwd,pwd,token,api_key,ip,X-Api-Key
+  ELASTIC_APM_SERVER_URL: http://elastic-agent-apm.elastic-cloud:8200
+  ELASTIC_APM_SERVICE_NAME: payment-layer-card-api
+  ELASTIC_APM_SERVICE_VERSION: 1.0.0
+  ELASTIC_APM_VERIFY_SERVER_CERT: false
+  ENABLE_APPLICATION_LOGGING: enabled
+  ENABLE_HEALTHZ_LOGGING: disabled
+  ENVIRONMENT: develop
+  HTTP_PORT: 8080
+  INTEGRATION_API_URL: https://payment-layer-integration-api.develop.afya.system
+  QUEUE_URL_CREATE_CUSTOMER: https://sqs.us-east-1.amazonaws.com/783417120609/develop-card-service-customer-created.fifo
+  UPDATE_CUSTOMER_INTEGRATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/783417120609/develop-card-service-customer-update.fifo
+
+serviceAccount:
+  create: true
+  name: develop-layer-card-api
+
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::783417120609:role/develop-layer-card-api@payment-layer-card-api
+
+externalSecrets:
+  enabled: true
+  basePath: develop
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    external-dns.alpha.kubernetes.io/hostname: payment-layer-card-api.develop.afya.systems
+  hosts:
+    - host: payment-layer-card-api.develop.afya.systems
+      paths:
+        - path: /
+          pathType: Prefix
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 60
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 128Mi

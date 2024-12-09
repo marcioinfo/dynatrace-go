@@ -1,0 +1,616 @@
+basePath: /
+definitions:
+  adapters_http.ErrorOutput:
+    properties:
+      code:
+        type: string
+      http_status:
+        type: integer
+      log_message:
+        type: string
+      message:
+        type: string
+    type: object
+  adapters_http.ErrorWrapperInternalDTO:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/adapters_http.ErrorOutput'
+        type: array
+      message:
+        type: string
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.BillingAddress:
+    properties:
+      city:
+        description: Cidade do endereço de cobrança
+        example: São Paulo
+        type: string
+      country:
+        description: País do endereço de cobrança
+        example: BR
+        type: string
+      district:
+        example: Centro
+        type: string
+      line_1:
+        description: Linha 1 do endereço de cobrança
+        example: Rua João Silva, 123
+        type: string
+      line_2:
+        description: Linha 2 do endereço de cobrança
+        example: Apto 123
+        type: string
+      postal_code:
+        description: 'TODO: MUDAR PARA SNAKE CASE                              //
+          Bairro do endereço de cobrança'
+        example: "12345678"
+        type: string
+      postalCode:
+        description: CEP do endereço de cobrança
+        example: "12345678"
+        type: string
+      state:
+        description: Estado do endereço de cobrança
+        example: SP
+        type: string
+    required:
+    - city
+    - country
+    - line_1
+    - state
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.CardToken:
+    properties:
+      gateway:
+        description: Gateway do token
+        example: rede
+        type: string
+      token:
+        description: Token do cartão
+        example: 9KwUaB1kwz8=
+        type: string
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.CreateCardDTOInput:
+    properties:
+      billing_address:
+        allOf:
+        - $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.BillingAddress'
+        description: Endereço de cobrança do cartão
+      brand:
+        description: Bandeira do cartão
+        example: visa
+        type: string
+      customer:
+        allOf:
+        - $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.Customer'
+        description: Cliente do cartão
+      customer_id:
+        description: Identificador do cliente
+        example: 835524dd-d897-45ed-a68e-2e1a8bf52314
+        type: string
+      cvv:
+        description: Código de segurança do cartão
+        example: "123"
+        type: string
+      exp_month:
+        description: Mês de expiração do cartão
+        example: "12"
+        type: string
+      exp_year:
+        description: Ano de expiração do cartão
+        example: "25"
+        type: string
+      holder:
+        description: Nome do portador do cartão
+        example: Joao Silva
+        type: string
+      number:
+        description: Número do cartão
+        example: "4111111111111111"
+        type: string
+    required:
+    - billing_address
+    - cvv
+    - exp_month
+    - exp_year
+    - holder
+    - number
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.CreateCardDTOOutput:
+    properties:
+      customer_id:
+        description: Identificador do cliente
+        example: 835524dd-d897-45ed-a68e-2e1a8bf52314
+        type: string
+      id:
+        description: Identificador do cartão
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.Customer:
+    properties:
+      address:
+        $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.BillingAddress'
+      birth_date:
+        example: "2000-11-06"
+        type: string
+      document:
+        example: "12345678901"
+        type: string
+      email:
+        example: teste@gmail.com
+        type: string
+      first_name:
+        example: João
+        type: string
+      gender:
+        enum:
+        - male
+        - female
+        example: male || female
+        type: string
+      last_name:
+        example: Silva
+        type: string
+      phone:
+        example: "11999999999"
+        type: string
+      service_id:
+        example: 835524dd-d897-45ed-a68e-2e1a8bf52314
+        type: string
+    required:
+    - address
+    - birth_date
+    - document
+    - email
+    - first_name
+    - gender
+    - last_name
+    - phone
+    - service_id
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.GetCardWithTokensDTO:
+    properties:
+      brand:
+        description: Bandeira do cartão
+        example: visa
+        type: string
+      created_at:
+        description: Data de criação do cartão
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+      customer_id:
+        description: Identificador do cliente
+        example: 835524dd-d897-45ed-a68e-2e1a8bf52314
+        type: string
+      exp_month:
+        description: Mês de expiração do cartão
+        example: "12"
+        type: string
+      exp_year:
+        description: Ano de expiração do cartão
+        example: "2025"
+        type: string
+      first_digits:
+        description: Primeiros dígitos do cartão
+        example: "411111"
+        type: string
+      holder:
+        description: Nome do portador do cartão
+        example: Joao Silva
+        type: string
+      id:
+        description: Identificador do cartão
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+      last_digits:
+        description: Últimos dígitos do cartão
+        example: "1111"
+        type: string
+      tokens:
+        description: Tokens do cartão
+        items:
+          $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.CardToken'
+        type: array
+      updated_at:
+        description: Data de atualização do cartão
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+    type: object
+  payment-layer-card-api_usecases_cards_dtos.GetCardWithoutTokensDTO:
+    properties:
+      brand:
+        description: Bandeira do cartão
+        example: visa
+        type: string
+      created_at:
+        description: Data de criação do cartão
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+      customer_id:
+        description: Identificador do cliente
+        example: 835524dd-d897-45ed-a68e-2e1a8bf52314
+        type: string
+      exp_month:
+        description: Mês de expiração do cartão
+        example: "12"
+        type: string
+      exp_year:
+        description: Ano de expiração do cartão
+        example: "2025"
+        type: string
+      first_digits:
+        description: Primeiros dígitos do cartão
+        example: "411111"
+        type: string
+      holder:
+        description: Nome do portador do cartão
+        example: Joao Silva
+        type: string
+      id:
+        description: Identificador do cartão
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+      last_digits:
+        description: Últimos dígitos do cartão
+        example: "1111"
+        type: string
+      updated_at:
+        description: Data de atualização do cartão
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+    type: object
+  payment-layer-card-api_usecases_customers_dtos.Address:
+    properties:
+      city:
+        description: Cidade do endereço de cliente
+        example: São Paulo
+        type: string
+      country:
+        description: País do endereço de cliente
+        example: BR
+        type: string
+      district:
+        description: Bairro do endereço de cliente
+        example: Centro
+        type: string
+      line_1:
+        description: Linha 1 do endereço de cliente
+        example: Rua João Silva, 123
+        type: string
+      line_2:
+        description: Linha 2 do endereço de cliente
+        example: Apto 123
+        type: string
+      postal_code:
+        description: 'TODO: MUDAR PARA SNAKE CASE'
+        example: "12345678"
+        type: string
+      postalCode:
+        description: CEP do endereço de cliente
+        example: "12345678"
+        type: string
+      state:
+        description: Estado do endereço de cliente
+        example: SP
+        type: string
+    required:
+    - city
+    - country
+    - district
+    - line_1
+    - state
+    type: object
+  payment-layer-card-api_usecases_customers_dtos.CreateCustomerDTOInput:
+    properties:
+      address:
+        $ref: '#/definitions/payment-layer-card-api_usecases_customers_dtos.Address'
+      birth_date:
+        example: "2000-11-02"
+        type: string
+      document:
+        example: "12345678901"
+        type: string
+      email:
+        example: teste@gmail.com
+        type: string
+      first_name:
+        example: João
+        type: string
+      gender:
+        enum:
+        - male
+        - female
+        - ""
+        example: male || female
+        type: string
+      last_name:
+        example: Silva
+        type: string
+      phone:
+        example: "11999999999"
+        maxLength: 13
+        minLength: 10
+        type: string
+      service_id:
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+    required:
+    - address
+    - birth_date
+    - document
+    - email
+    - first_name
+    - last_name
+    - phone
+    - service_id
+    type: object
+  payment-layer-card-api_usecases_customers_dtos.CreateCustomerDTOOutput:
+    properties:
+      id:
+        description: Identificador do cliente
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+    type: object
+  payment-layer-card-api_usecases_customers_dtos.CustomerOutputDTO:
+    properties:
+      birth_date:
+        example: 2000-02-30
+        type: string
+      created_at:
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+      document:
+        example: "12345678901"
+        type: string
+      email:
+        example: teste@gmail.com
+        type: string
+      gender:
+        example: male || female
+        type: string
+      id:
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+      name:
+        example: João Silva
+        type: string
+      phone:
+        example: "5511999999999"
+        type: string
+      updated_at:
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+    type: object
+  payment-layer-card-api_usecases_customers_dtos.CustomerTokens:
+    properties:
+      gateway:
+        example: pagarme
+        type: string
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9
+        type: string
+    type: object
+  payment-layer-card-api_usecases_customers_dtos.CustomerWithTokensOutputDTO:
+    properties:
+      birth_date:
+        example: "2000-02-11"
+        type: string
+      created_at:
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+      document:
+        example: "12345678901"
+        type: string
+      email:
+        example: teste@gmail.com
+        type: string
+      gender:
+        example: male || female
+        type: string
+      id:
+        example: 835524dd-d897-45ed-a68e-2e1a8bf522d7
+        type: string
+      name:
+        example: João Silva
+        type: string
+      phone:
+        example: "5511999999999"
+        type: string
+      tokens:
+        items:
+          $ref: '#/definitions/payment-layer-card-api_usecases_customers_dtos.CustomerTokens'
+        type: array
+      updated_at:
+        example: "2006-01-02T15:04:05-07:00"
+        type: string
+    type: object
+info:
+  contact:
+    name: Foundation Squad
+  description: Layer para integrações de pagamento Afya.
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  title: Card Layer API
+  version: "1.0"
+paths:
+  /cards:
+    post:
+      consumes:
+      - application/json
+      description: Cria um cartão e o tokemiza nos gateways de pagamento
+      parameters:
+      - description: Informações sobre o cartão e informações do pagador
+        in: body
+        name: card
+        required: true
+        schema:
+          $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.CreateCardDTOInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.CreateCardDTOOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/adapters_http.ErrorWrapperInternalDTO'
+      security:
+      - x-api-key: []
+      summary: Criar um cartão
+      tags:
+      - Cards
+  /cards/{cardId}/customer/{customerId}:
+    get:
+      consumes:
+      - application/json
+      description: Buscar um cartão pelo identificador e id do cliente
+      parameters:
+      - description: Identificador do cartão
+        in: path
+        name: cardId
+        required: true
+        type: string
+      - description: Identificador do cliente
+        in: path
+        name: customerId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.GetCardWithoutTokensDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/adapters_http.ErrorWrapperInternalDTO'
+      security:
+      - x-api-key: []
+      summary: Obter um cartão pelo id e id do cliente
+      tags:
+      - Cards
+  /cards/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Buscar um cartão pelo identificador
+      parameters:
+      - description: Identificador do cartão
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment-layer-card-api_usecases_cards_dtos.GetCardWithTokensDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/adapters_http.ErrorWrapperInternalDTO'
+      security:
+      - x-api-key: []
+      summary: Obter um cartão pelo id
+      tags:
+      - Cards
+  /customers:
+    post:
+      consumes:
+      - application/json
+      description: Cria um cliente e o tokeniza nos gateways de pagamento
+      parameters:
+      - description: Informações sobre o cliente
+        in: body
+        name: customer
+        required: true
+        schema:
+          $ref: '#/definitions/payment-layer-card-api_usecases_customers_dtos.CreateCustomerDTOInput'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/payment-layer-card-api_usecases_customers_dtos.CreateCustomerDTOOutput'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/adapters_http.ErrorWrapperInternalDTO'
+      security:
+      - x-api-key: []
+      summary: Cria um cliente
+      tags:
+      - Customers
+  /customers/{id}:
+    get:
+      consumes:
+      - application/json
+      description: Buscar um cliente pelo identificador
+      parameters:
+      - description: Identificador do cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment-layer-card-api_usecases_customers_dtos.CustomerWithTokensOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/adapters_http.ErrorWrapperInternalDTO'
+      security:
+      - x-api-key: []
+      summary: Obter um cliente pelo id
+      tags:
+      - Customers
+  /customers/document/{document}/serviceID/{serviceID}:
+    get:
+      consumes:
+      - application/json
+      description: Buscar um cliente pelo documento
+      parameters:
+      - description: Documento do cliente
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/payment-layer-card-api_usecases_customers_dtos.CustomerOutputDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/adapters_http.ErrorWrapperInternalDTO'
+      security:
+      - x-api-key: []
+      summary: Obter um cliente pelo documento
+      tags:
+      - Customers
+schemes:
+- https
+- http
+securityDefinitions:
+  x-api-key:
+    in: header
+    name: x-api-key
+    type: apiKey
+swagger: "2.0"
